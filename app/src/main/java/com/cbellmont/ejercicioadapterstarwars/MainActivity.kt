@@ -1,6 +1,7 @@
 package com.cbellmont.ejercicioadapterstarwars
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -34,22 +35,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun downloadAll(){
         lifecycleScope.launch {
-            val list = loadFilmInBackground()
-            setAdapterOnMainThread(list)
-        }
-    }
-
-    private suspend fun loadFilmInBackground() : MutableList<Film>{
-        // El withContext(Dispatchers.IO) no es estrictamente necesario. Lo ponemos solo por seguridad.
-        return withContext(Dispatchers.IO) {
-            return@withContext model.getFilms()
-        }
-    }
-
-    private suspend fun setAdapterOnMainThread(filmsList: MutableList<Film>) {
-        withContext(Dispatchers.Main) {
-            adapter.updateFilms(filmsList)
+            binding.pbLoading.visibility = View.VISIBLE
+            val list = model.getFilms()
+            Log.w("CARLOS", list.toString())
+            adapter.updateFilms(list)
             binding.pbLoading.visibility = View.GONE
         }
     }
+
+
 }
